@@ -1,7 +1,13 @@
 [package]
 name = "simple-clap-logger"
+description = "A simple cli logger, which aims to mimic the clap output format."
 version = "0.1.0"
+authors = [
+    "TeyKey1 <thierry.kuehni@hotmail.com>",
+]
 edition = "2021"
+repository = "https://github.com/TeyKey1/simple-clap-logger"
+license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
