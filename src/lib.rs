@@ -49,7 +49,7 @@ impl Log for Logger {
     }
 
     fn log(&self, record: &log::Record) {
-        if self.level <= record.level() {
+        if self.level < record.level() {
             return;
         }
 
