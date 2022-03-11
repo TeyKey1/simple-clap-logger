@@ -2,7 +2,7 @@
 
 A simple cli logger, which aims to mimic the clap format of error reporting in order to create a seamless cli experience without formatting inconsistencies.
 
-![example][./example.JPG]
+![example](./example.JPG)
 
 ## Getting started
 ```rust
