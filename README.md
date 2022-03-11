@@ -1,8 +1,8 @@
 # Simple Clap Logger
 
-A simple cli logger, which aims to mimic the clap format of error reporting in order to create a seamless cli experience without formatting inconsistencies.
+A simple cli logger, which aims to mimic the [clap](https://github.com/clap-rs/clap) format of error reporting in order to create a seamless cli experience without formatting inconsistencies.
 
-![example][./example.JPG]
+![example][./example.PNG]
 
 ## Getting started
 ```rust
