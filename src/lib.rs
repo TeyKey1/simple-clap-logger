@@ -1,20 +1,20 @@
 //! # Simple Clap Logger
-//! 
+//!
 //! A simple cli logger, which aims to mimic the clap format of error reporting in order to create a seamless cli experience without formatting inconsistencies.
-//! 
+//!
 //! ## Example
-//! 
+//!
 //! ```rust
 //! use simple_clap_logger::Logger;
 //! use log::Level;
-//! 
+//!
 //! // Initialize the logger with Info logging level
 //! Logger::init_with_level(Level::Info);
-//! 
+//!
 //! ```
 
-use log::{Log, Level};
-use colored::{Colorize, ColoredString};
+use colored::{ColoredString, Colorize};
+use log::{Level, Log};
 
 /// Main logger struct
 pub struct Logger {
@@ -23,23 +23,23 @@ pub struct Logger {
 
 impl Logger {
     /// Initializes logger with a standard logging level of [`Level::Error`]
-    /// 
+    ///
     /// # Panics
     /// This function may only be called once in the application, as it registers the logger as global logger. In case any init function is called more than once the application panics.
-    pub fn init(){
+    pub fn init() {
         Self::init_with_level(Level::Error);
     }
 
     /// Initializes logger with provided logging level
-    /// 
+    ///
     /// # Panics
     /// This function may only be called once in the application, as it registers the logger as global logger. In case any init function is called more than once the application panics.
-    pub fn init_with_level(level: Level){
-        let logger = Logger {
-            level,
-        };
+    pub fn init_with_level(level: Level) {
+        let logger = Logger { level };
 
-        log::set_boxed_logger(Box::new(logger)).expect("Failed to setup logger, as another one is already registered");
+        log::set_boxed_logger(Box::new(logger))
+            .expect("Failed to setup logger, as another one is already registered");
+        log::set_max_level(level.to_level_filter());
     }
 }
 
@@ -53,9 +53,9 @@ impl Log for Logger {
             return;
         }
 
-        let prefix = get_prefix(&self.level);
+        let prefix = get_prefix(&record.level());
 
-        if self.level == Level::Error {
+        if record.level() == Level::Error {
             eprintln!("{:6} {}", prefix, record.args());
         } else {
             println!("{:6} {}", prefix, record.args());
@@ -66,7 +66,7 @@ impl Log for Logger {
 }
 
 /// Returns a colored prefix for each log level
-fn get_prefix(level: &Level) -> ColoredString{
+fn get_prefix(level: &Level) -> ColoredString {
     match level {
         Level::Error => "error:".red().bold(),
         Level::Warn => "warn:".yellow().bold(),
@@ -78,19 +78,24 @@ fn get_prefix(level: &Level) -> ColoredString{
 
 #[cfg(test)]
 mod tests {
-    use log::{Log, Level, MetadataBuilder};
     use crate::Logger;
+    use log::{Level, Log, MetadataBuilder};
 
     #[test]
-    fn check_log_level(){
-        let logger = Logger {
-            level: Level::Info,
-        };
+    fn check_log_level() {
+        let logger = Logger { level: Level::Info };
 
         assert!(logger.enabled(&MetadataBuilder::new().level(Level::Error).build()));
         assert!(logger.enabled(&MetadataBuilder::new().level(Level::Warn).build()));
         assert!(logger.enabled(&MetadataBuilder::new().level(Level::Info).build()));
         assert!(!logger.enabled(&MetadataBuilder::new().level(Level::Debug).build()));
         assert!(!logger.enabled(&MetadataBuilder::new().level(Level::Trace).build()));
+    }
+
+    #[test]
+    #[should_panic]
+    fn check_panic() {
+        let _logger_1 = Logger::init();
+        let _logger_2 = Logger::init();
     }
 }
